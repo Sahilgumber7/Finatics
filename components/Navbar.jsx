@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { listVals } from "../app/utils/navlist";
 import { FaGear } from "react-icons/fa6";
 import { CgProfile } from "react-icons/cg";
+import LogoutButton from "./Logout";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -33,7 +34,8 @@ const Navbar = () => {
             ))}
           </ul>
         </div>
-        <div className="flex flex-row">
+        <div className="flex flex-row items-center space-x-1">
+          <LogoutButton />
           <Link href="/settings">
             <FaGear className="w-6 h-6 text-gray-900" />
           </Link>

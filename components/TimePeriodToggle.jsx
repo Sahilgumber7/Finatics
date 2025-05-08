@@ -14,7 +14,7 @@ const TimePeriodList = () => {
   ];
 
   return (
-    <ul className="flex-wrap items-center justify-center text-gray-900 border flex rounded-lg">
+    <ul className="flex-wrap items-center justify-center p-1 text-gray-900 border flex rounded-lg">
       {listVals.map((item, index) => (
         <div key={index} className="flex flex-row">
           <li>
