@@ -9,7 +9,7 @@ export default function Home() {
       <p className="text-lg text-gray-600 mb-6 max-w-xl">
         Stay on top of your budget. Monitor your spending, visualize your savings, and take control of your finances with our simple expense tracker.
       </p>
-      <Link href="/login">
+      <Link href="/pages/dashboard">
         <button className="px-6 py-3 bg-blue-600 text-white rounded-xl text-lg hover:bg-blue-700 transition">
           Get Started
         </button>
