@@ -45,7 +45,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-24 p-6 border rounded-lg">
+    <div className=' min-h-screen flex items-center justify-center '>
+    <div className="max-w-md w-full mx-auto p-6 border rounded-lg ">
       <h1 className="text-2xl font-semibold mb-4">Login</h1>
       {error && <p className="text-sm text-red-600 mb-2">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -81,6 +82,7 @@ export default function LoginPage() {
           Sign Up
         </a>
       </p>
+    </div>
     </div>
   );
 }
