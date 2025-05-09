@@ -5,8 +5,8 @@ const CreditCard = ({ username, balance, income, expense }) => {
   return (
     <Card className="w-full max-w-md bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-xl rounded-2xl">
       <CardHeader>
-        <CardTitle className="text-lg">My Wallet</CardTitle>
-        <p className="text-sm text-blue-100">{username}</p>
+        <CardTitle className="text-lg">{username}'s Wallet</CardTitle>
+
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
