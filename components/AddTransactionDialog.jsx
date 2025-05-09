@@ -71,24 +71,24 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
           <div className="space-y-2">
             <Label>Type</Label>
             <ToggleGroup
-  type="single"
-  value={type}
-  onValueChange={(val) => val && setType(val)}
-  className="w-full"
->
-  <ToggleGroupItem
-    value="income"
-    className="w-full data-[state=on]:bg-black data-[state=on]:text-white"
-  >
-    Income
-  </ToggleGroupItem>
-  <ToggleGroupItem
-    value="expense"
-    className="w-full data-[state=on]:bg-black data-[state=on]:text-white"
-  >
-    Expense
-  </ToggleGroupItem>
-</ToggleGroup>
+            type="single"
+            value={type}
+            onValueChange={(val) => val && setType(val)}
+            className="w-full"
+            >
+            <ToggleGroupItem
+            value="income"
+            className="w-full data-[state=on]:bg-black data-[state=on]:text-white"
+            >
+            Income
+            </ToggleGroupItem>
+            <ToggleGroupItem
+            value="expense"
+            className="w-full data-[state=on]:bg-black data-[state=on]:text-white"
+            >
+            Expense
+            </ToggleGroupItem>
+            </ToggleGroup>
           </div>
 
           <div className="space-y-2">
