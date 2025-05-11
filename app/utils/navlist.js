@@ -19,9 +19,5 @@ export const listVals = [
       text: "Savings",
       id: 4,
     },
-    {
-      url: "/pages/accounts",
-      text: "Accounts",
-      id: 5,
-    },
+    
   ];
