@@ -20,11 +20,14 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("income");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false); // dialog control
 
   const handleAdd = async () => {
     if (!session?.user?.id) return alert("User not authenticated.");
     if (!amount || isNaN(amount)) return alert("Enter a valid amount.");
+    if (!category) return alert("Please select a category.");
 
     setLoading(true);
     try {
@@ -33,12 +36,18 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
         amount: parseFloat(amount),
         type,
         description,
+        category,
       });
 
+      // Reset form
       setAmount("");
       setType("income");
       setDescription("");
+      setCategory("");
       onTransactionAdded?.();
+
+      // Auto-close dialog after 2 seconds
+      setTimeout(() => setOpen(false), 2000);
     } catch (error) {
       alert(error.message);
     } finally {
@@ -47,9 +56,11 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default">Add Transaction</Button>
+        <Button variant="default" onClick={() => setOpen(true)}>
+          Add Transaction
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[400px]">
         <DialogHeader>
@@ -67,27 +78,26 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
             />
           </div>
 
-          {/* Income/Expense toggle */}
           <div className="space-y-2">
             <Label>Type</Label>
             <ToggleGroup
-            type="single"
-            value={type}
-            onValueChange={(val) => val && setType(val)}
-            className="w-full"
+              type="single"
+              value={type}
+              onValueChange={(val) => val && setType(val)}
+              className="w-full"
             >
-            <ToggleGroupItem
-            value="income"
-            className="w-full data-[state=on]:bg-black data-[state=on]:text-white"
-            >
-            Income
-            </ToggleGroupItem>
-            <ToggleGroupItem
-            value="expense"
-            className="w-full data-[state=on]:bg-black data-[state=on]:text-white"
-            >
-            Expense
-            </ToggleGroupItem>
+              <ToggleGroupItem
+                value="income"
+                className="w-full data-[state=on]:bg-black data-[state=on]:text-white"
+              >
+                Income
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="expense"
+                className="w-full data-[state=on]:bg-black data-[state=on]:text-white"
+              >
+                Expense
+              </ToggleGroupItem>
             </ToggleGroup>
           </div>
 
@@ -99,6 +109,24 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g. Salary, Groceries"
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Category</Label>
+            <select
+              id="category"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="">Select category</option>
+              <option value="Food">Food</option>
+              <option value="Transportation">Transportation</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Bills">Bills</option>
+              <option value="Salary">Salary</option>
+              <option value="Others">Others</option>
+            </select>
           </div>
         </div>
         <Button onClick={handleAdd} disabled={loading} className="w-full">

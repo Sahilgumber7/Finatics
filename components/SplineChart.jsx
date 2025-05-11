@@ -47,8 +47,10 @@ const SplineChart = ({ labels, incomeData, expenseData }) => {
       <CardContent>
         <ChartContainer config={chartConfig}>
           <LineChart
-          data={chartData}
-          margin={{ left: 12, right: 12 }}
+            data={chartData}
+            margin={{ left: 12, right: 12 }}
+            width={300}
+            height={180}
           >
             <CartesianGrid vertical={false} />
             <XAxis

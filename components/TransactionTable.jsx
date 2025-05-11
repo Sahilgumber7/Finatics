@@ -16,16 +16,25 @@ import { getFromDate } from "@/lib/db/transactions";
 import EditTransactionDialog from "./EditTransactionDialog";
 import DeleteTransactionDialog from "./DeleteTransactionDialog";
 
-export default function TransactionTable({ timePeriod }) {
+export default function TransactionTable({ timePeriod, refreshFlag }) {
   const { data: session } = useSession();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchTransactions = async () => {
-    if (!session?.user?.id) return;
+    if (!session?.user?.id) {
+      console.warn("No session or user ID found.");
+      return;
+    }
+
     setLoading(true);
 
-    const fromDate = getFromDate(timePeriod);
+    const fromDate = timePeriod ? getFromDate(timePeriod) : null;
+
+    console.log("User ID:", session.user.id);
+    console.log("Time Period:", timePeriod);
+    console.log("From Date:", fromDate?.toISOString?.());
+
     let query = supabase
       .from("transactions")
       .select("*")
@@ -38,17 +47,22 @@ export default function TransactionTable({ timePeriod }) {
 
     const { data, error } = await query;
 
+    console.log("Fetched transactions:", data);
+    console.log("Error (if any):", error);
+
     if (error) {
       console.error("Error fetching transactions:", error.message);
     } else {
       setTransactions(data);
     }
+
     setLoading(false);
   };
 
+  // Only use this single working useEffect
   useEffect(() => {
     fetchTransactions();
-  }, [session?.user?.id, timePeriod]);
+  }, [session?.user?.id, timePeriod, refreshFlag]);
 
   return (
     <div className="border rounded-lg overflow-hidden">
@@ -56,6 +70,8 @@ export default function TransactionTable({ timePeriod }) {
         <TableCaption>
           {loading
             ? "Loading transactions..."
+            : transactions.length === 0
+            ? "No transactions found."
             : "A list of your recent transactions."}
         </TableCaption>
         <TableHeader>
@@ -63,41 +79,51 @@ export default function TransactionTable({ timePeriod }) {
             <TableHead className="w-[100px]">Date</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Type</TableHead>
+            <TableHead>Category</TableHead>
             <TableHead className="text-right">Amount</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {transactions.map((item) => (
-            <TableRow key={item.id} className="border-b hover:bg-gray-50">
-              <TableCell>
-                {new Date(item.created_at).toLocaleDateString()}
-              </TableCell>
-              <TableCell>{item.description}</TableCell>
-              <TableCell>{item.type}</TableCell>
-              <TableCell className="text-right">
-                <span
-                  className={
-                    item.type === "expense"
-                      ? "text-red-500"
-                      : "text-green-600"
-                  }
-                >
-                  ₹{Math.abs(item.amount)}
-                </span>
-              </TableCell>
-              <TableCell className="flex justify-center gap-2 py-2">
-                <EditTransactionDialog
-                  transaction={item}
-                  onUpdate={fetchTransactions}
-                />
-                <DeleteTransactionDialog
-                  transactionId={item.id}
-                  onDelete={fetchTransactions}
-                />
+          {transactions.length === 0 && !loading ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center py-4">
+                No transactions found for this time period.
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            transactions.map((item) => (
+              <TableRow key={item.id} className="border-b hover:bg-gray-50">
+                <TableCell>
+                  {new Date(item.created_at).toLocaleDateString()}
+                </TableCell>
+                <TableCell>{item.description}</TableCell>
+                <TableCell>{item.type}</TableCell>
+                <TableCell>{item.category}</TableCell>
+                <TableCell className="text-right">
+                  <span
+                    className={
+                      item.type === "expense"
+                        ? "text-red-500"
+                        : "text-green-600"
+                    }
+                  >
+                    ₹{Math.abs(item.amount)}
+                  </span>
+                </TableCell>
+                <TableCell className="flex justify-center gap-2 py-2">
+                  <EditTransactionDialog
+                    transaction={item}
+                    onUpdate={fetchTransactions}
+                  />
+                  <DeleteTransactionDialog
+                    transactionId={item.id}
+                    onDelete={fetchTransactions}
+                  />
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

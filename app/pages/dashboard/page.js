@@ -11,6 +11,7 @@ import {
 import CreditCard from "@/components/CreditCard";
 import SplineChart from "@/components/SplineChart";
 
+
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
@@ -50,12 +51,15 @@ export default async function DashboardPage() {
         </div>
 
         {/* Chart - 70% */}
-        <div className="w-[70%] h-full p-4 border rounded-lg bg-white shadow-lg">
+        <div className="w-[40%] h-full p-4 border rounded-lg bg-white shadow-lg">
           <SplineChart
             labels={labels}
             incomeData={incomeData}
             expenseData={expenseData}
           />
+        </div>
+        <div className="p-4 border rounded-lg bg-white shadow-lg">
+            
         </div>
       </div>
     </div>
