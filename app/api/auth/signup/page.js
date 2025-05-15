@@ -1,55 +1,49 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react"; // Using next-auth's signIn function
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button"; // Adjust imports based on your UI library
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import supabase from "@/lib/supabaseClient"; // Make sure you have your supabase client set up
 
-export default function LoginPage() {
+export default function SignUpPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     setError("");
-
-    const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
-
-    if (!trimmedEmail || !trimmedPassword) {
-      setError("Please enter both email and password.");
-      return;
-    }
-
     setLoading(true);
 
-    // Sending credentials to NextAuth API route (in app/api/auth/[...nextauth]/route.js)
-    const res = await signIn("credentials", {
-      redirect: false,
-      email: trimmedEmail,
-      password: trimmedPassword,
-    });
+    try {
+      // Using Supabase auth to sign up
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
 
-    setLoading(false);
-
-    if (res?.error) {
-      setError(res.error);
-    } else {
-      router.push("/pages/dashboard"); // Redirect to dashboard after successful login
+      if (error) {
+        setError(error.message);
+      } else {
+        router.push("/pages/dashboard"); // Redirect to login page after successful signup
+      }
+    } catch (error) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className=' min-h-screen flex items-center justify-center '>
     <div className="max-w-md w-full mx-auto p-6 border rounded-lg ">
-      <h1 className="text-2xl font-semibold mb-4">Login</h1>
+      <h1 className="text-2xl font-semibold mb-4">Sign Up</h1>
       {error && <p className="text-sm text-red-600 mb-2">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSignUp} className="space-y-4">
         <div>
           <Label htmlFor="email">Email</Label>
           <Input
@@ -73,13 +67,13 @@ export default function LoginPage() {
           />
         </div>
         <Button type="submit" disabled={loading} className="w-full">
-          {loading ? "Signing in..." : "Sign In"}
+          {loading ? "Signing Up..." : "Sign Up"}
         </Button>
       </form>
       <p className="mt-4 text-sm text-center">
-        Don’t have an account?{" "}
-        <a href="/signup" className="text-blue-600 hover:underline">
-          Sign Up
+        Already have an account?{" "}
+        <a href="api/auth/login" className="text-blue-600 hover:underline">
+          Login
         </a>
       </p>
     </div>
