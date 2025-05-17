@@ -1,13 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { Plus } from "lucide-react";
-import { useSession } from "next-auth/react";
-import  supabase from "@/lib/supabaseClient"; 
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -15,76 +7,83 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Card } from "@/components/ui/card";
-
+import { Card, CardContent } from "@/components/ui/card";
+import { Plus } from "lucide-react";
+import { useState, useRef } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import supabase from "@/lib/supabaseClient";
+import { useSession } from "next-auth/react";
+import { DialogClose } from "@radix-ui/react-dialog";
 
 export default function NewSavingDialog({ onSuccess }) {
   const { data: session } = useSession();
-  const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [savedAmount, setSavedAmount] = useState("");
+  const closeRef = useRef(null);
 
-  const handleSubmit = async () => {
-    if (!title || !targetAmount || !savedAmount || !session?.user?.id) return;
+  const handleCreate = async () => {
+    if (!session?.user?.id) return;
 
-    const { error } = await supabase.from("savings").insert({
-      user_id: session.user.id,
-      title,
-      target_amount: parseFloat(targetAmount),
-      saved_amount: parseFloat(savedAmount),
-    });
+    const { error } = await supabase.from("savings").insert([
+      {
+        user_id: session.user.id,
+        title,
+        target_amount: Number(targetAmount),
+        saved_amount: Number(savedAmount),
+      },
+    ]);
 
     if (!error) {
-      setOpen(false);
       setTitle("");
       setTargetAmount("");
       setSavedAmount("");
-      onSuccess?.(); // Refresh savings list
-    } else {
-      console.error(error);
+      onSuccess?.();
+
+      setTimeout(() => {
+        closeRef.current?.click(); // trigger DialogClose
+      }, 2000);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog>
       <DialogTrigger asChild>
-        <Card
-          className="h-36 w-full sm:w-64 border-dashed border-2 border-muted-foreground flex items-center justify-center cursor-pointer hover:shadow-md transition"
-          role="button"
-        >
-          <Plus className="h-6 w-6 text-muted-foreground" />
+        <Card className="h-[170px] border-dashed border-2 cursor-pointer hover:opacity-80 transition">
+          <CardContent className="flex items-center justify-center h-full">
+            <Plus className="w-6 h-6 text-muted-foreground" />
+          </CardContent>
         </Card>
       </DialogTrigger>
+
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Saving Goal</DialogTitle>
+          <DialogTitle>New Saving Goal</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div>
-            <Label>Title</Label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} />
-          </div>
-          <div>
-            <Label>Target Amount</Label>
-            <Input
-              type="number"
-              value={targetAmount}
-              onChange={(e) => setTargetAmount(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Saved Amount</Label>
-            <Input
-              type="number"
-              value={savedAmount}
-              onChange={(e) => setSavedAmount(e.target.value)}
-            />
-          </div>
-          <Button onClick={handleSubmit} className="w-full">
-            Save
-          </Button>
+          <Input
+            placeholder="Goal title (e.g. New Car)"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <Input
+            placeholder="Target amount"
+            value={targetAmount}
+            onChange={(e) => setTargetAmount(e.target.value)}
+            type="number"
+          />
+          <Input
+            placeholder="Saved amount"
+            value={savedAmount}
+            onChange={(e) => setSavedAmount(e.target.value)}
+            type="number"
+          />
+          <Button onClick={handleCreate}>Create</Button>
         </div>
+        <DialogClose asChild>
+          <button ref={closeRef} className="hidden" />
+        </DialogClose>
       </DialogContent>
     </Dialog>
   );
