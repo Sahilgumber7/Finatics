@@ -23,6 +23,8 @@ export default async function DashboardPage() {
     );
   }
 
+  
+
   const transactions = await getUserTransactions(session.user.id);
   const { income, expense, balance } = calculateTotals(transactions);
 
@@ -59,7 +61,6 @@ export default async function DashboardPage() {
           />
         </div>
         <div className="p-4 border rounded-lg bg-white shadow-lg">
-            
         </div>
       </div>
     </div>
