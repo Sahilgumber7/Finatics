@@ -31,10 +31,6 @@ export default function TransactionTable({ timePeriod, refreshFlag }) {
 
     const fromDate = timePeriod ? getFromDate(timePeriod) : null;
 
-    console.log("User ID:", session.user.id);
-    console.log("Time Period:", timePeriod);
-    console.log("From Date:", fromDate?.toISOString?.());
-
     let query = supabase
       .from("transactions")
       .select("*")
@@ -47,9 +43,6 @@ export default function TransactionTable({ timePeriod, refreshFlag }) {
 
     const { data, error } = await query;
 
-    console.log("Fetched transactions:", data);
-    console.log("Error (if any):", error);
-
     if (error) {
       console.error("Error fetching transactions:", error.message);
     } else {
@@ -59,13 +52,12 @@ export default function TransactionTable({ timePeriod, refreshFlag }) {
     setLoading(false);
   };
 
-  // Only use this single working useEffect
   useEffect(() => {
     fetchTransactions();
   }, [session?.user?.id, timePeriod, refreshFlag]);
 
   return (
-    <div className="border rounded-lg overflow-hidden">
+    <div className="rounded-lg border border-border overflow-hidden">
       <Table>
         <TableCaption>
           {loading
@@ -93,7 +85,10 @@ export default function TransactionTable({ timePeriod, refreshFlag }) {
             </TableRow>
           ) : (
             transactions.map((item) => (
-              <TableRow key={item.id} className="border-b hover:bg-gray-50">
+              <TableRow
+                key={item.id}
+                className="border-b hover:bg-muted transition-colors"
+              >
                 <TableCell>
                   {new Date(item.created_at).toLocaleDateString()}
                 </TableCell>
@@ -104,8 +99,8 @@ export default function TransactionTable({ timePeriod, refreshFlag }) {
                   <span
                     className={
                       item.type === "expense"
-                        ? "text-red-500"
-                        : "text-green-600"
+                        ? "text-destructive"
+                        : "text-green-600 dark:text-green-400"
                     }
                   >
                     ₹{Math.abs(item.amount)}

@@ -26,10 +26,7 @@ export default async function AnalyticsPage() {
 
   return (
     <div className="pt-8 px-12">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-6">
-        Analytics Overview
-      </h1>
-
+      <h2 className="text-3xl font-medium text-gray-900 dark:text-gray-100">Analytics Overview</h2>
       <div className="flex flex-wrap gap-6">
         {/* Spline Chart: Income vs Expense */}
         <div className="w-full md:w-[60%] p-4 border rounded-lg bg-white shadow-lg">

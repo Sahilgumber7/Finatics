@@ -3,6 +3,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import SessionProviderWrapper from "@/components/Provider";
+import { ThemeProvider } from "next-themes";
 
 
 
@@ -18,10 +19,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <SessionProviderWrapper>
           {children} 
         </SessionProviderWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );

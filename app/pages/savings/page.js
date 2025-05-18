@@ -41,7 +41,7 @@ export default function SavingsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with title and AddToSavingDialog */}
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-4xl font-medium text-gray-900">Your Savings</h2>
+        <h2 className="text-3xl font-medium text-gray-900 dark:text-gray-100">Your Savings</h2>
           <AddToSavingDialog savings={savings} onSuccess={handleSavingAdded} />
         </div>
 

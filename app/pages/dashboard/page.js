@@ -37,7 +37,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="pt-8 px-12">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-6">
+      <h1 className="text-3xl font-medium text-gray-900 dark:text-gray-100">
         Welcome, {session.user.email}!
       </h1>
 
