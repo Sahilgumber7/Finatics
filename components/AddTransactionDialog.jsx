@@ -12,6 +12,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { addTransaction } from "@/lib/db/transactions";
 
@@ -22,7 +29,7 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false); // dialog control
+  const [open, setOpen] = useState(false);
 
   const handleAdd = async () => {
     if (!session?.user?.id) return alert("User not authenticated.");
@@ -67,6 +74,7 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
           <DialogTitle>Add Transaction</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          {/* Amount Input */}
           <div className="space-y-2">
             <Label htmlFor="amount">Amount</Label>
             <Input
@@ -78,6 +86,7 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
             />
           </div>
 
+          {/* Type Toggle */}
           <div className="space-y-2">
             <Label>Type</Label>
             <ToggleGroup
@@ -87,20 +96,22 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
               className="w-full"
             >
               <ToggleGroupItem
-                value="income"
-                className="w-full data-[state=on]:bg-black data-[state=on]:text-white"
-              >
-                Income
-              </ToggleGroupItem>
-              <ToggleGroupItem
-                value="expense"
-                className="w-full data-[state=on]:bg-black data-[state=on]:text-white"
-              >
-                Expense
-              </ToggleGroupItem>
+  value="income"
+  className="w-full data-[state=on]:bg-black data-[state=on]:text-white dark:data-[state=on]:bg-white dark:data-[state=on]:text-black"
+>
+  Income
+</ToggleGroupItem>
+<ToggleGroupItem
+  value="expense"
+  className="w-full data-[state=on]:bg-black data-[state=on]:text-white dark:data-[state=on]:bg-white dark:data-[state=on]:text-black"
+>
+  Expense
+</ToggleGroupItem>
+
             </ToggleGroup>
           </div>
 
+          
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
             <Input
@@ -111,24 +122,27 @@ export default function AddTransactionDialog({ onTransactionAdded }) {
             />
           </div>
 
+          {/* Category Select */}
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select category</option>
-              <option value="Food">Food</option>
-              <option value="Transportation">Transportation</option>
-              <option value="Shopping">Shopping</option>
-              <option value="Bills">Bills</option>
-              <option value="Salary">Salary</option>
-              <option value="Others">Others</option>
-            </select>
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger id="category">
+                <SelectValue placeholder="Select category" />
+              </SelectTrigger>
+              <SelectContent>
+                {["Food", "Transportation", "Shopping", "Bills", "Salary", "Others"].map(
+                  (cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat}
+                    </SelectItem>
+                  )
+                )}
+              </SelectContent>
+            </Select>
           </div>
         </div>
+
+        {/* Submit Button */}
         <Button onClick={handleAdd} disabled={loading} className="w-full">
           {loading ? "Adding..." : "Add Transaction"}
         </Button>

@@ -11,7 +11,7 @@ const Navbar = () => {
   const pathname = usePathname();
 
   return (
-    <nav className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-md">
+<nav className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 shadow-md dark:shadow-lg">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link href="/" className="flex items-center">
           <span className="self-center text-2xl font-semibold text-black dark:text-white">

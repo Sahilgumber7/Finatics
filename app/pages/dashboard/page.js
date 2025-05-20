@@ -1,5 +1,3 @@
-// pages/dashboard.js
-
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import {
@@ -10,9 +8,7 @@ import {
 } from "@/lib/db/dashboard";
 import CreditCard from "@/components/CreditCard";
 import SplineChart from "@/components/SplineChart";
-
-
-export default async function DashboardPage() {
+import TransactionTable from "@/components/TransactionTable";export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
@@ -22,8 +18,6 @@ export default async function DashboardPage() {
       </div>
     );
   }
-
-  
 
   const transactions = await getUserTransactions(session.user.id);
   const { income, expense, balance } = calculateTotals(transactions);
@@ -36,14 +30,14 @@ export default async function DashboardPage() {
   const expenseData = labels.map((date) => groupedData[date].expense);
 
   return (
-    <div className="pt-8 px-12">
-      <h1 className="text-3xl font-medium text-gray-900 dark:text-gray-100">
+    <div className="pt-8 px-4 sm:px-8 lg:px-12 ">
+      <h1 className="text-2xl sm:text-3xl font-medium text-gray-900 dark:text-gray-100 mb-6">
         Welcome, {session.user.email}!
       </h1>
 
-      <div className="flex space-x-6 items-stretch">
-        {/* Credit Card - 30% */}
-        <div className="w-[30%] h-full">
+      
+      <div className="flex flex-col lg:flex-row gap-6 mb-6">
+        <div className="lg:w-[30%] w-full">
           <CreditCard
             username={session.user.email}
             balance={balance}
@@ -52,15 +46,19 @@ export default async function DashboardPage() {
           />
         </div>
 
-        {/* Chart - 70% */}
-        <div className="w-[40%] h-full p-4 border rounded-lg bg-white shadow-lg">
-          <SplineChart
-            labels={labels}
-            incomeData={incomeData}
-            expenseData={expenseData}
-          />
+        <div className="lg:w-[70%] w-full p-4 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 shadow-lg">
+          <TransactionTable />
         </div>
-        <div className="p-4 border rounded-lg bg-white shadow-lg">
+      </div>
+
+      {/* Row 2: TransactionTables (70% and 30%) */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="lg:w-[70%] w-full p-4 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 shadow-lg">
+          <TransactionTable />
+        </div>
+
+        <div className="lg:w-[30%] w-full p-4 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 shadow-lg">
+          <TransactionTable />
         </div>
       </div>
     </div>

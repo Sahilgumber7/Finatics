@@ -3,7 +3,7 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
 // Public routes that don't need auth
-const PUBLIC_PATHS = ["/", "/login", "/signup", "/api/auth"];
+const PUBLIC_PATHS = ["/", "/api/auth"];
 
 export async function middleware(req) {
   const { pathname } = req.nextUrl;
@@ -19,7 +19,7 @@ export async function middleware(req) {
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   if (!token) {
-    const loginUrl = new URL("/login", req.url);
+    const loginUrl = new URL("/api/auth/login", req.url);
     return NextResponse.redirect(loginUrl);
   }
 
