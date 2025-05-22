@@ -6,10 +6,16 @@ import {
   getLast30DaysTransactions,
   groupTransactionsByDay,
 } from "@/lib/db/dashboard";
+
 import CreditCard from "@/components/CreditCard";
 import SplineChart from "@/components/SplineChart";
-import TransactionTable from "@/components/TransactionTable";export default async function DashboardPage() {
+import TransactionTable from "@/components/TransactionTable";
+import SavingsPreview from "@/components/SavingsPreview";
+
+
+export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
+
 
   if (!session) {
     return (
@@ -18,6 +24,21 @@ import TransactionTable from "@/components/TransactionTable";export default asyn
       </div>
     );
   }
+
+    const fetchSavings = async () => {
+    if (!session?.user?.id) return;
+    const { data, error } = await supabase
+      .from("savings")
+      .select("*")
+      .eq("user_id", session.user.id)
+      .order("created_at", { ascending: false });
+
+    if (!error) {
+      setSavings(data);
+    } else {
+      console.error(error);
+    }
+  };
 
   const transactions = await getUserTransactions(session.user.id);
   const { income, expense, balance } = calculateTotals(transactions);
@@ -54,7 +75,7 @@ import TransactionTable from "@/components/TransactionTable";export default asyn
       {/* Row 2: TransactionTables (70% and 30%) */}
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="lg:w-[70%] w-full p-4 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 shadow-lg">
-          <TransactionTable />
+          <SavingsPreview />
         </div>
 
         <div className="lg:w-[30%] w-full p-4 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 shadow-lg">
