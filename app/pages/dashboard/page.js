@@ -11,6 +11,7 @@ import CreditCard from "@/components/CreditCard";
 import SplineChart from "@/components/SplineChart";
 import TransactionTable from "@/components/TransactionTable";
 import SavingsPreview from "@/components/SavingsPreview";
+import TransactionTableDashboard from "@/components/TransactionTableD";
 
 
 export default async function DashboardPage() {
@@ -75,11 +76,15 @@ export default async function DashboardPage() {
       {/* Row 2: TransactionTables (70% and 30%) */}
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="lg:w-[70%] w-full p-4 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 shadow-lg">
-          <SavingsPreview />
+            <h2 className="px-4 pt-4 text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+              Latest Transactions
+            </h2>
+            <TransactionTableDashboard />
         </div>
 
+
         <div className="lg:w-[30%] w-full p-4 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 shadow-lg">
-          <TransactionTable />
+          <SavingsPreview />
         </div>
       </div>
     </div>
