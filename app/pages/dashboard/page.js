@@ -8,15 +8,13 @@ import {
 } from "@/lib/db/dashboard";
 
 import CreditCard from "@/components/CreditCard";
-import SplineChart from "@/components/SplineChart";
-import TransactionTable from "@/components/TransactionTable";
+import IncomeExpenseBarChart from "@/components/BarChart";
 import SavingsPreview from "@/components/SavingsPreview";
 import TransactionTableDashboard from "@/components/TransactionTableD";
 
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-
 
   if (!session) {
     return (
@@ -25,21 +23,6 @@ export default async function DashboardPage() {
       </div>
     );
   }
-
-    const fetchSavings = async () => {
-    if (!session?.user?.id) return;
-    const { data, error } = await supabase
-      .from("savings")
-      .select("*")
-      .eq("user_id", session.user.id)
-      .order("created_at", { ascending: false });
-
-    if (!error) {
-      setSavings(data);
-    } else {
-      console.error(error);
-    }
-  };
 
   const transactions = await getUserTransactions(session.user.id);
   const { income, expense, balance } = calculateTotals(transactions);
@@ -52,13 +35,13 @@ export default async function DashboardPage() {
   const expenseData = labels.map((date) => groupedData[date].expense);
 
   return (
-    <div className="pt-8 px-4 sm:px-8 lg:px-12 ">
-      <h1 className="text-2xl sm:text-3xl font-medium text-gray-900 dark:text-gray-100 mb-6">
+    <div className="pt-8 px-4 sm:px-8 lg:px-12 min-h-screen space-y-6">
+      <h1 className="text-2xl sm:text-3xl font-medium text-gray-900 dark:text-gray-100">
         Welcome, {session.user.email}!
       </h1>
 
-      
-      <div className="flex flex-col lg:flex-row gap-6 mb-6">
+      {/* Row 1: CreditCard + Chart */}
+      <div className="flex flex-col lg:flex-row gap-6">
         <div className="lg:w-[30%] w-full">
           <CreditCard
             username={session.user.email}
@@ -67,26 +50,34 @@ export default async function DashboardPage() {
             expense={expense}
           />
         </div>
-
         <div className="lg:w-[70%] w-full p-4 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 shadow-lg">
-          <TransactionTable />
+          <div className="h-[260px]">
+            <IncomeExpenseBarChart
+      labels={labels}
+      incomeData={incomeData}
+      expenseData={expenseData}
+    />
+          </div>
         </div>
       </div>
 
-      {/* Row 2: TransactionTables (70% and 30%) */}
+      {/* Row 2: Transactions + Savings */}
       <div className="flex flex-col lg:flex-row gap-6">
         <div className="lg:w-[70%] w-full p-4 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 shadow-lg">
-            <h2 className="px-4 pt-4 text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
-              Latest Transactions
-            </h2>
-            <TransactionTableDashboard />
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            Latest Transactions
+          </h2>
+          <TransactionTableDashboard />
         </div>
 
-
         <div className="lg:w-[30%] w-full p-4 border rounded-lg bg-white dark:bg-gray-900 dark:border-gray-800 shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
+            Savings Snapshot
+          </h2>
           <SavingsPreview />
         </div>
       </div>
     </div>
   );
 }
+
